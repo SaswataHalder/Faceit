@@ -17,7 +17,7 @@
     </nav>
 
     <div class="container">
-        <form>
+        <form onsubmit="loadFile(event)" target="_blank" action="./login.html">
             <div class="form-group">
               <label for="exampleInputEmail1">Name</label>
               <input type="text" class="form-control" placeholder="Name here" id="newname">
@@ -26,10 +26,11 @@
             <div class="form-group">
                 <label for="exampleFormControlFile1">Example file input</label>
                 <input type="file" class="form-control" id="exampleFormControlFile1" accept="image/*" multiple>
+                <img id="output"/>
             </div>
             
             
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmit">Submit</button>
           </form>
     </div>
     
@@ -37,6 +38,78 @@
     <script>
         let namebox = document.getElementById("newname");
         let facebox = document.getElementById("exampleFormControlFile1");
+        
+
+        var loadFile = function(event) {
+            // var output = document.getElementById('output');
+            var length = event.target.files.length;
+            for(var i=0;i<length;i++){
+                getBase64(event.target.files[i]).then(
+                    data =>{
+                        console.log(data);
+                        registerUser(data, namebox.value); 
+                    } 
+                );                               
+            }
+
+            // const files = event.target.files
+            // const formData = new FormData()
+            // formData.append('myFile', files[0])
+        };
+
+        // function blobToBase64(blobUrl) {
+        //     var xhr = new XMLHttpRequest;
+        //     xhr.responseType = 'blob';
+
+        //     xhr.onload = function() {
+        //     var recoveredBlob = xhr.response;
+
+        //     var reader = new FileReader;
+
+        //     reader.onload = function() {
+        //         var blobAsDataUrl = reader.result;
+        //         window.location = blobAsDataUrl;
+        //     };
+
+        //     reader.readAsDataURL(recoveredBlob);
+        //     };
+
+        //     xhr.open('GET', blobUrl);
+        //     xhr.send();
+        // }
+
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+            
+
+        function registerUser(image, name) {
+            fetch('http://localhost:5000/registeruser',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    
+                    index : localStorage.getItem("myIndex"),
+                    img : image,
+                    name : name
+
+                })                
+            })
+            .then(res =>{
+                console.log("SUCCESS"+res);
+                return res.json();
+            })
+            .then(data => console.log(data))
+            .catch(error => console.log(error))
+        }
+
     </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
