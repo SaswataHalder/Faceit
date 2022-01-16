@@ -7,14 +7,14 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <link href="css/styles.css" rel="stylesheet" />
     <title>Hello, world!</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
   <body>    
     
-    <h1>Faceit</h1>
+    <h1 class="align-items-xl-center">Faceit</h1>
     
     <div class="row">
         <div class="col-sm-6">
@@ -31,11 +31,13 @@
             <div class="card-body">
                 <h5 class="card-title">Use existing index</h5>
                 <p class="card-text">Use any of the existing indices to carry out face recognition</p>
+                <p class="card-text" id="showCurrentIndex"></p>
                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#indexModal" id="btnAvailable">See available indices</button>
             </div>
             </div>
         </div>
     </div>
+    
 
     <div id="myModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -63,7 +65,7 @@
                         </ul>
                       </div>
                     </div>        
-                    <button type="submit" class="btn btn-primary">Make Index</button>
+                    <button type="submit" class="btn btn-primary useIndex">Make Index</button>
                 </form>
             </div>
           </div>      
@@ -82,7 +84,7 @@
                 <form target="_blank" action="./login.html">
                     <div class="mb-3" id="dynamicDropdown">                      
                     </div>        
-                    <button type="submit" class="btn btn-primary">Use Index</button>
+                    <button type="submit" class="btn btn-primary useIndex">Use Index</button>
                 </form>
             </div>
           </div>      
@@ -99,6 +101,10 @@
     </script>
 
     <script>
+        var currentIndex = "";
+
+        localStorage.setItem("myIndex", currentIndex);
+
         function makeIndex(x) {
             fetch('http://127.0.0.1:5000/makeindex',{
                 method: 'POST',
@@ -112,7 +118,10 @@
             .then(res =>{
                 return res.json();
             })
-            .then(data => console.log(data))
+            .then(data => {
+                setCurrentIndex(x);
+                getCurrentIndex();
+            })
             .catch(error => console.log(error))
         }
 
@@ -138,6 +147,13 @@
                 // Take the HTML that was created with the Handlebars template and
                 // set the HTML in the myForm div element.
                 $("#dynamicDropdown").html(html);
+                var index = $("#chooseIndex").val();
+                console.log(index);
+                if(index !== ""){
+                    setCurrentIndex(index);
+                    $("#showCurrentIndex").text("Currently using "+index);
+                    getCurrentIndex();
+                }    
             })
             .catch(error => console.log(error))
         }
@@ -147,7 +163,25 @@
             makeIndex(name);
         }
 
+        function setCurrentIndex(x){
+            currentIndex = x;
+            localStorage.setItem("myIndex", x);
+        }
+
+        function getCurrentIndex(){
+            return currentIndex;
+        }
+        $("#showCurrentIndex").text("Currently using "+currentIndex);
         $("#btnAvailable").on("click", getindices());
+        $(".useIndex").on("click", function(){
+            var index = $("#chooseIndex").val();
+            console.log(index);
+            if(index !== ""){
+                setCurrentIndex(index);
+                $("#showCurrentIndex").text("Currently using "+index);
+                getCurrentIndex();
+            }
+        });
 
     </script>
     <!-- Optional JavaScript -->
