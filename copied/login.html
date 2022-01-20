@@ -227,7 +227,7 @@
             .catch(error => console.log(error))
         }
 
-        function recogniseUser() {
+        function recogniseUser(image) {
             fetch('http://127.0.0.1:5000/recognise',{
                 method: 'POST',
                 headers: {
@@ -235,8 +235,8 @@
                 },
                 body: JSON.stringify({
                     
-                    index : "hi",
-                    img : "C:/Users/Saswata Halder/Downloads/bbff6634-0ba8-476b-be9f-ba74629eed55.jpg"                    
+                    index : localStorage.getItem("myIndex"),
+                    img : image                    
 
                   })                
             })
@@ -268,34 +268,12 @@
 
         //Add file blob to a form and post
         function postFile(file) {
-            // let formdata = new FormData();
-            // formdata.append("image", file);
-            
-            // let xhr = new XMLHttpRequest();
-            // xhr.open('POST', 'http://localhost:5000/predict', true);
-            // xhr.onload = function () {
-            //     if (this.status === 200) {
-            //         var data = JSON.parse(this.responseText);
-
-            //         console.log(this.response);
-            //         if (data['authenticate'] == true) {
-            //             alert('User authenticated ! Welcome ' + data['name']);
-            //             window.location.href = "{{ url_for('dashboard')}}";
-            //         }
-            //         else if(data['face_present'] == false){
-            //             alert('No face detected in frame!');
-            //         }
-            //         else {
-            //             alert('Unknown user !');
-            //             window.location.href = "{{ url_for('login')}}";
-            //         } 
-            //     }
-            //     else {
-            //         console.error(xhr);
-            //     }
-            // };
-            // xhr.send(formdata);
-
+            var reader = new FileReader();
+            reader.readAsDataURL(file); 
+            reader.onloadend = function() {
+            var base64data = reader.result;                
+            recogniseUser(base64data);
+            }
 
         }
 
@@ -316,13 +294,13 @@
         //Check user using picture
         v.onclick = function () {
             console.log('clicked camera');
-            // sendImagefromCanvas();
+            sendImagefromCanvas();
             // helloWorld();
             // helloWorld2();
             // makeIndex();
             // represent();
             // registerUser();
-            recogniseUser();
+            //recogniseUser();
         };
         
         //Check user using password
