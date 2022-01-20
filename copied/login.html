@@ -109,7 +109,7 @@
     <div id="input">
         <div id="camera_input">
             <video id="myVideo" autoplay></video>
-            <button id="button"  class="btn btn-success" style="vertical-align:middle">
+            <button id="button"  class="btn btn-primary" style="vertical-align:middle">
                 <span>Face Capture</span>
             </button>
         </div>
@@ -127,17 +127,22 @@
 
                   
 
-                <input  class="btn btn-success" type="submit" value="Log in" >
+                
             </form>
+            
         </div>
-    </div>
+        <div class="row align-items-center">
+            <div><button type="submit" class="btn btn-primary" id="btnSubmit"><span>Upload</span></button></div>
+        </div>
+            </div>
     
     
     <script>
         window.alert(localStorage.getItem("myIndex"));
+        let localupload = document.getElementById("btnSubmit");
+        let webcam = document.getElementById("button");
         let v = document.getElementById("myVideo");
-        let b = document.getElementById("button");
-        
+
         //create a canvas to grab an image for upload
         let imageCanvas = document.createElement('canvas');
         let imageCtx = imageCanvas.getContext("2d");
@@ -291,24 +296,28 @@
             imageCanvas.toBlob(postFile, 'image/jpeg');
         }
 
-        //Check user using picture
-        v.onclick = function () {
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        webcam.onclick = function () {
+            console.log('clicked button');
             console.log('clicked camera');
             sendImagefromCanvas();
-            // helloWorld();
-            // helloWorld2();
-            // makeIndex();
-            // represent();
-            // registerUser();
-            //recogniseUser();
         };
-        
-        //Check user using password
-        b.onclick = function () {
-            console.log('clicked button');
-            // sendImagefromCanvas();
-            // helloWorld();
-            helloWorld2();
+
+        localupload.onclick = function (event) {
+            getBase64(event.target.files[0]).then(
+                    data =>{
+                        console.log(data);
+                        recogniseUser(data); 
+                    } 
+                );
         };
 
         window.onload = function () {
