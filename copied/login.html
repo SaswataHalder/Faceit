@@ -114,7 +114,7 @@
             </button>
         </div>
         <div id="form_input">
-            <form id="login-detail" action="/authenticate_user" method="POST">
+            <form id="login-detail" >
                 <div class="form-group">
                     <label for="exampleFormControlFile1">Example file input</label>
                     <input type="file" class="form-control" id="exampleFormControlFile1" accept="image/*">
@@ -124,16 +124,17 @@
                       <video id="webcam" autoplay playsinline width="160" height="120"></video>
                       <canvas id="canvas" class="d-none"></canvas>
                   </div>
-
+                </div>
+                
+                <div class="row align-items-center">
+                    <div><button type="button" class="btn btn-primary" id="btnSubmit" onclick="localimage(event)"><span>Upload</span></button></div>
+                </div>
                   
 
                 
             </form>
             
-        </div>
-        <div class="row align-items-center">
-            <div><button type="submit" class="btn btn-primary" id="btnSubmit"><span>Upload</span></button></div>
-        </div>
+        
             </div>
     
     
@@ -311,14 +312,15 @@
             sendImagefromCanvas();
         };
 
-        localupload.onclick = function (event) {
+        function localimage(event) {
+            console.log(event.target.files);
             getBase64(event.target.files[0]).then(
                     data =>{
                         console.log(data);
                         recogniseUser(data); 
                     } 
                 );
-        };
+        }
 
         window.onload = function () {
 
